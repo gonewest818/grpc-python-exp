@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message OpenStream {
+    string client_id = 1;
+}
+
+message Response {
+    string message = 1;
+    uint32 level = 2;
+}
+
+service Speaker {
+    rpc getStream(OpenStream) returns (stream Response);
+}
+
