@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 import grpc
 
@@ -11,9 +12,10 @@ socket = 'localhost:50051'
 channel = grpc.insecure_channel(socket)
 client = hellostream_pb2_grpc.SpeakerStub(channel)
 logging.info("Connected to the Server %s", socket)
+client_id = str(uuid.uuid4())
+logging.info("My id is %s", client_id)
 
-
-request = hellostream_pb2.OpenStream(client_id="foo")
+request = hellostream_pb2.OpenStream(client_id=client_id)
 response = client.getStream(request)
 for item in response:
     logging.info("item received %s", item)
