@@ -43,8 +43,12 @@ class SpeakerServicer(hellostream_pb2_grpc.SpeakerServicer):
         logging.info('new event %s %d for streams %d',
                      message, level, len(self.client_streams))
         event = hellostream_pb2.Response(message=message, level=level)
-        for s in self.client_streams.keys():
-            self.client_streams[s].put(event)
+        # we need a copy of the keys because other threads can modify
+        for s in list(self.client_streams.keys()):
+            try:
+                self.client_streams[s].put(event)
+            except KeyError:
+                pass
 
 
 def serve():
@@ -59,7 +63,7 @@ def serve():
     while True:
         servicer.add_event(f'hello {i}', i)
         i = i + 1
-        time.sleep(2)
+        time.sleep(0.1)
 
     server.wait_for_termination()
 
